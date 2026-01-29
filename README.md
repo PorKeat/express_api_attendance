@@ -1,59 +1,149 @@
-# Attendance API Endpoints
+# SV3 Attendance API
 
-This document outlines the API endpoints for the SV3 Attendance project. You can use tools like Postman to test these endpoints.
+This is the backend API for the SV3 Attendance application. It provides endpoints for managing students, teachers, classes, subjects, and attendance records.
 
-**Base URL:** `http://localhost:3000` (or your configured port)
+## Features
 
----
+-   CRUD operations for Students, Teachers, Classes, and Subjects.
+-   Marking and tracking student attendance.
+-   Retrieving attendance reports by student or class.
+-   Searching for students and teachers.
 
-## Endpoints
+## Getting Started
 
-### 1. Attendance (`/api/attendance`)
+### Prerequisites
 
-| Method   | Endpoint                 | Description                    | Request Body (Example)                               |
-| :------- | :----------------------- | :----------------------------- | :--------------------------------------------------- |
-| `GET`    | `/api/attendance`        | Get all attendance records     | None                                                 |
-| `GET`    | `/api/attendance/:id`    | Get attendance by ID           | None                                                 |
-| `POST`   | `/api/attendance`        | Add a new attendance record    | `{ "student_id": 1, "class_id": 1, "date": "2024-01-22", "status": "present" }` |
-| `PUT`    | `/api/attendance/:id`    | Update an attendance record    | `{ "status": "absent" }`                             |
-| `DELETE` | `/api/attendance/:id`    | Delete an attendance record    | None                                                 |
+-   Node.js (v14 or higher)
+-   MySQL
 
-### 2. Classes (`/api/classes`)
+### Installation
 
-| Method   | Endpoint               | Description                 | Request Body (Example)                |
-| :------- | :--------------------- | :-------------------------- | :------------------------------------ |
-| `GET`    | `/api/classes`         | Get all classes             | None                                  |
-| `GET`    | `/api/classes/:id`     | Get class by ID             | None                                  |
-| `POST`   | `/api/classes`         | Add a new class             | `{ "name": "Mathematics A", "teacher_id": 1, "subject_id": 1 }` |
-| `PUT`    | `/api/classes/:id`     | Update a class              | `{ "name": "Mathematics B" }`         |
-| `DELETE` | `/api/classes/:id`     | Delete a class              | None                                  |
+1.  Clone the repository:
 
-### 3. Students (`/api/students`)
+    ```bash
+    git clone https://github.com/your-username/sv3-attendance.git
+    cd express_api_attendance
+    ```
 
-| Method   | Endpoint                | Description                | Request Body (Example)             |
-| :------- | :---------------------- | :------------------------- | :--------------------------------- |
-| `GET`    | `/api/students`         | Get all students           | None                               |
-| `GET`    | `/api/students/:id`     | Get student by ID          | None                               |
-| `POST`   | `/api/students`         | Add a new student          | `{ "first_name": "John", "last_name": "Doe", "email": "john.doe@example.com" }` |
-| `PUT`    | `/api/students/:id`     | Update a student           | `{ "email": "john.d@example.com" }`|
-| `DELETE` | `/api/students/:id`     | Delete a student           | None                               |
+2.  Install the dependencies:
 
-### 4. Subjects (`/api/subjects`)
+    ```bash
+    npm install
+    ```
 
-| Method   | Endpoint                | Description                 | Request Body (Example)      |
-| :------- | :---------------------- | :-------------------------- | :-------------------------- |
-| `GET`    | `/api/subjects`         | Get all subjects            | None                        |
-| `GET`    | `/api/subjects/:id`     | Get subject by ID           | None                        |
-| `POST`   | `/api/subjects`         | Add a new subject           | `{ "name": "History" }`     |
-| `PUT`    | `/api/subjects/:id`     | Update a subject            | `{ "name": "Geography" }`   |
-| `DELETE` | `/api/subjects/:id`     | Delete a subject            | None                        |
+3.  Create a `.env` file in the root of the project and add the following environment variables:
 
-### 5. Teachers (`/api/teachers`)
+    ```
+    DB_HOST=localhost
+    DB_USER=your_db_user
+    DB_PASSWORD=your_db_password
+    DB_NAME=sv3_attendance
+    DB_PORT=3306
+    DB_CONNECTION_LIMIT=10
+    ```
 
-| Method   | Endpoint                | Description                 | Request Body (Example)             |
-| :------- | :---------------------- | :-------------------------- | :--------------------------------- |
-| `GET`    | `/api/teachers`         | Get all teachers            | None                               |
-| `GET`    | `/api/teachers/:id`     | Get teacher by ID           | None                               |
-| `POST`   | `/api/teachers`         | Add a new teacher           | `{ "first_name": "Jane", "last_name": "Smith", "email": "jane.smith@example.com" }` |
-| `PUT`    | `/api/teachers/:id`     | Update a teacher            | `{ "email": "jane.s@example.com" }`|
-| `DELETE` | `/api/teachers/:id`     | Delete a teacher            | None                               |
+### Database Migration
+
+To set up the database schema, run the following command:
+
+```bash
+npm run migrate
+```
+
+This will create the necessary tables in your database.
+
+To rollback migrations, you can use:
+
+```bash
+npm run migrate:down
+```
+
+To refresh all migrations (drop all tables and re-run all migrations):
+
+```bash
+npm run migrate:fresh
+```
+
+### Running the Application
+
+To start the server, run the following command:
+
+```bash
+npm start
+```
+
+For development, you can use `nodemon` to automatically restart the server on file changes:
+
+```bash
+npm run dev
+```
+
+The API will be available at `http://localhost:3000`.
+
+## API Endpoints
+
+The base URL for all endpoints is `/api`.
+
+### Attendance (`/attendance`)
+
+| Method   | Endpoint                               | Description                       |
+| :------- | :------------------------------------- | :-------------------------------- |
+| `GET`    | `/`                                    | Get all attendance records        |
+| `POST`   | `/`                                    | Mark a single attendance record   |
+| `POST`   | `/bulk`                                | Mark bulk attendance for a class  |
+| `GET`    | `/student/:studentId`                  | Get attendance history for a student |
+| `GET`    | `/student/:studentId/summary`          | Get attendance summary for a student |
+| `GET`    | `/class/:classId/date/:date`           | Get class attendance by date      |
+| `GET`    | `/report/class/:classId`               | Get a class attendance report     |
+| `PUT`    | `/:id`                                 | Update an attendance record       |
+| `DELETE` | `/:id`                                 | Delete an attendance record       |
+
+### Classes (`/classes`)
+
+| Method   | Endpoint              | Description               |
+| :------- | :-------------------- | :------------------------ |
+| `GET`    | `/`                   | Get all classes           |
+| `GET`    | `/:id`                | Get a single class by ID  |
+| `POST`   | `/`                   | Create a new class        |
+| `PUT`    | `/:id`                | Update a class            |
+| `DELETE` | `/:id`                | Delete a class            |
+| `GET`    | `/teacher/:teacherId` | Get all classes for a teacher |
+
+### Students (`/students`)
+
+| Method   | Endpoint          | Description                 |
+| :------- | :---------------- | :-------------------------- |
+| `GET`    | `/`               | Get all students            |
+| `GET`    | `/:id`            | Get a single student by ID  |
+| `POST`   | `/`               | Create a new student        |
+| `PUT`    | `/:id`            | Update a student            |
+| `DELETE` | `/:id`            | Soft delete a student       |
+| `DELETE` | `/:id/hard`       | Hard delete a student       |
+| `GET`    | `/search`         | Search for students         |
+| `GET`    | `/active`         | Get all active students     |
+| `GET`    | `/inactive`       | Get all inactive students   |
+| `GET`    | `/class/:classId` | Get all students in a class |
+
+### Subjects (`/subjects`)
+
+| Method   | Endpoint | Description               |
+| :------- | :------- | :------------------------ |
+| `GET`    | `/`      | Get all subjects          |
+| `GET`    | `/:id`   | Get a single subject by ID|
+| `POST`   | `/`      | Create a new subject      |
+| `PUT`    | `/:id`   | Update a subject          |
+| `DELETE` | `/:id`   | Delete a subject          |
+
+### Teachers (`/teachers`)
+
+| Method   | Endpoint            | Description                 |
+| :------- | :------------------ | :-------------------------- |
+| `GET`    | `/`                 | Get all teachers            |
+| `GET`    | `/:id`              | Get a single teacher by ID  |
+| `POST`   | `/`                 | Create a new teacher        |
+| `PUT`    | `/:id`              | Update a teacher            |
+| `DELETE` | `/:id`              | Delete a teacher            |
+| `GET`    | `/search`           | Search for teachers         |
+| `GET`    | `/subject/:subjectId` | Get all teachers for a subject |
+| `GET`    | `/active`           | Get all active teachers     |
+| `GET`    | `/inactive`         | Get all inactive teachers   |
